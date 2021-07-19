@@ -6,16 +6,26 @@
 
 import logging
 import sys
-from typing import Container
 sys.path.append('D:\Cosmos_DB\logconfig.py')
 import logconfig
 from azure.cosmos import container, exceptions, CosmosClient, PartitionKey, partition_key
 import student
 from decouple import config
 
-# endpoint=config('endpoint')
-# key=config('key')
+
 class School:
+    '''
+    Description:
+        School class for creating comos db connection and container then executing following methods.
+    Functions:
+        constructor.
+        create_container.
+        create_record.
+        read_record.
+        query_charges.
+        delete_record.
+        drop_database.
+    '''
     def __init__(self):
         self.conn=CosmosClient(
             url=config('endpoint'),
@@ -23,6 +33,14 @@ class School:
         )
 
     def create_container(self,containerName):
+        '''
+        Description:
+            Method creates databse and container in CosmosDB account.
+        Paraeters:
+            containerName.
+        Return:
+            container.
+        '''
         database = self.conn.create_database_if_not_exists(id=config('database_name'))
         container = database.create_container_if_not_exists(
         id=containerName, 
@@ -31,54 +49,47 @@ class School:
         )
         return container
 
-# myclient = CosmosClient(endpoint, key)
-
-# database_name = config('database_name')
-# database = myclient.create_database_if_not_exists(id=database_name)
-
-# container_name = config('container_name')
-
-# container = database.create_container_if_not_exists(
-#     id=container_name, 
-#     partition_key=PartitionKey(path="/class"),
-#     offer_throughput=400
-# )
 
     def create_record(self,container):
         '''
         Description:
             Method gets student details as JSON object and add them as item in container.
         Parameters:
-            None.
+            self,container
         Returns:
             None.
         '''
-        student_items_to_create=[student.get_sam_data(),student.get_sandra_data()]
-        for student_item in student_items_to_create:
-            container.create_item(body=student_item)
-
+        try:
+            student_items_to_create=[student.get_sam_data(),student.get_sandra_data()]
+            for student_item in student_items_to_create:
+                container.create_item(body=student_item)
+        except Exception as ex:
+            logging.exception(ex)
 
     def read_record(self,container):
         '''
         Description:
             Method reads all available JSON items in the container.Then, logging.info them with request units consumed.
         Parameters:
-            None.
+            self,container.
         Returns:
             None.
         '''
-        for studnt in container.read_all_items():
-            logging.info(studnt['id'],studnt['name'],studnt['class'])
-            item_response = container.read_item(item=studnt['id'], partition_key=studnt['class'])
-            request_charge = container.client_connection.last_response_headers['x-ms-request-charge']
-            logging.info('Read item with id {0}. Operation consumed {1} request units'.format(item_response['id'], (request_charge)))
+        try:
+            for studnt in container.read_all_items():
+                logging.info(studnt['id'],studnt['name'],studnt['class'])
+                item_response = container.read_item(item=studnt['id'], partition_key=studnt['class'])
+                request_charge = container.client_connection.last_response_headers['x-ms-request-charge']
+                logging.info('Read item with id {0}. Operation consumed {1} request units'.format(item_response['id'], (request_charge)))
+        except Exception as ex:
+            logging.exception(ex)
 
     def query_charges(self,container):
         '''
         Description:
             Method executes SQL query gets the result and gets request units consumed for that query.
         Parameters:
-            None.
+            self,container.
         Returns:
             None.
         '''
@@ -100,7 +111,7 @@ class School:
         Description:
             Delete a record in the container
         Parameter:
-            None
+            self,container
         Return:
             None
         '''
@@ -118,7 +129,7 @@ class School:
         Description:
             Delete the created Database
         Parameter:
-            None
+            self,databaseName
         Return:
             None
         '''
@@ -129,6 +140,10 @@ class School:
             logging.exception("Drop Database Unsuccessfull")
 
 def main():
+    '''
+    Description:
+        Driver method for executing all methods in script.
+    '''
     std=School()
     containerName='studentRecord'
     container=std.create_container(containerName)
