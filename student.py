@@ -4,7 +4,7 @@ def get_sam_data():
     sam_item={
         "id": "1_"+str(uuid.uuid4()),
         "class": "first",
-        "name": "sara"
+        "name": "sam"
     }
     return sam_item
 
