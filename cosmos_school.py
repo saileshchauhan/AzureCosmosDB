@@ -18,13 +18,13 @@ class School:
     Description:
         School class for creating comos db connection and container then executing following methods.
     Functions:
-        constructor.
-        create_container.
-        create_record.
-        read_record.
-        query_charges.
-        delete_record.
-        drop_database.
+        constructor()
+        create_container()
+        create_record()
+        read_record()
+        query_charges()
+        delete_record()
+        drop_database()
     '''
     def __init__(self):
         self.conn=CosmosClient(
