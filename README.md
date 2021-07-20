@@ -1,13 +1,6 @@
 # Azure Cosmos DB
 
-* ### Feature Branch has Python script for establishing connection with CosmosDB account and methods for doing CRUD operation, then deleting the resources.
-  * Class: School
-  * Methods:
-      * __init__()
-      * create_container()
-       * create_record()
-       * read_record()
-       * query_charge()
-       * delete_record()
-       * drop_database()
-  * main() 
+* ### Development Branch has Python script for establishing connection with CosmosDB account using SQL_API and MONGO_DB_API
+  * Completed CRUD operation for school class using SQL_API in cosmos db.
+  * Completed CRUD operation for school class using pymongo API in cosmos db.
+
