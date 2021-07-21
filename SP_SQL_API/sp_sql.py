@@ -69,6 +69,21 @@ class StoredProcedureGrocery:
             logging.info(result)
         except Exception as ex:
             logging.info(ex)
+    
+    def drop_database(self,databaseName):
+        '''
+        Description:
+            Delete the created Database
+        Parameter:
+            self,databaseName
+        Return:
+            None
+        '''
+        try:
+            self.client.delete_database(databaseName)
+            logging.info("Database {} dropped successfully ".format(databaseName))
+        except Exception:
+            logging.exception("Drop Database Unsuccessfull")
 
 def main():
     '''
@@ -84,9 +99,11 @@ def main():
         "description":"Pick up strawberries",
         "isComplete":False
     }
+    database=config('sp_database_name')
     job=StoredProcedureGrocery()
     job.create_sp()
     job.insert_item_using_sp(new_item)
+    job.drop_database(database)
 
 if __name__=="__main__":
      main()
